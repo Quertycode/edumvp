@@ -53,6 +53,17 @@ export default function AdminPanel() {
     reload()
   }
 
+  const updateUserName = (username, field, value) => {
+    const user = users.find(u => u.username === username)
+    if (!user) return
+    
+    upsertUser({
+      ...user,
+      [field]: value
+    })
+    reload()
+  }
+
   return (
     <div className='space-y-6'>
       <Card title='Создание / обновление пользователя'>
@@ -118,6 +129,7 @@ export default function AdminPanel() {
             <thead>
               <tr className='text-left text-gray-500'>
                 <th className='py-2'>Имя</th>
+                <th className='py-2'>Фамилия</th>
                 <th className='py-2'>Почта</th>
                 <th>Роль</th>
                 <th>Русский</th>
@@ -127,10 +139,24 @@ export default function AdminPanel() {
             </thead>
             <tbody>
               {users.map((user) => {
-                const name = [user.firstName, user.lastName].filter(Boolean).join(' ').trim()
                 return (
                   <tr key={user.username} className='border-t'>
-                    <td className='py-2'>{name || '—'}</td>
+                    <td className='py-2'>
+                      <input
+                        type='text'
+                        value={user.firstName || ''}
+                        onChange={(e) => updateUserName(user.username, 'firstName', e.target.value)}
+                        className='border rounded px-2 py-1 text-sm w-full'
+                      />
+                    </td>
+                    <td className='py-2'>
+                      <input
+                        type='text'
+                        value={user.lastName || ''}
+                        onChange={(e) => updateUserName(user.username, 'lastName', e.target.value)}
+                        className='border rounded px-2 py-1 text-sm w-full'
+                      />
+                    </td>
                     <td className='py-2'>{user.email || user.username}</td>
                     <td>
                       <select
