@@ -1,0 +1,91 @@
+{
+  "math": {
+    "title": "Математика",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Уравнения и неравенства",
+        "video": "https://www.youtube.com/embed/7RhFlrACEbI",
+        "materials": [
+          "https://example.com/materials/math1.pdf",
+          "https://example.com/materials/math1_exercises.pdf"
+        ],
+        "homework": [1, 2]
+      },
+      {
+        "id": 2,
+        "title": "Тригонометрия",
+        "video": "https://www.youtube.com/embed/7RhFlrACEbI",
+        "materials": [
+          "https://example.com/materials/math2.pdf",
+          "https://example.com/materials/trigonometry_table.pdf"
+        ],
+        "homework": [3]
+      },
+      {
+        "id": 3,
+        "title": "Производные и интегралы",
+        "video": "https://www.youtube.com/embed/7RhFlrACEbI",
+        "materials": [
+          "https://example.com/materials/calculus_basics.pdf",
+          "https://example.com/materials/integration_rules.pdf"
+        ],
+        "homework": [4, 5]
+      },
+      {
+        "id": 4,
+        "title": "Геометрия в пространстве",
+        "video": "https://www.youtube.com/embed/7RhFlrACEbI",
+        "materials": [
+          "https://example.com/materials/3d_geometry.pdf"
+        ],
+        "homework": [6]
+      }
+    ]
+  },
+  "russian": {
+    "title": "Русский язык",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Орфография и пунктуация",
+        "video": "https://www.youtube.com/embed/7RhFlrACEbI",
+        "materials": [
+          "https://example.com/materials/rus1.pdf",
+          "https://example.com/materials/spelling_rules.pdf"
+        ],
+        "homework": [7, 8]
+      },
+      {
+        "id": 2,
+        "title": "Части речи",
+        "video": "https://www.youtube.com/embed/7RhFlrACEbI",
+        "materials": [
+          "https://example.com/materials/rus2.pdf",
+          "https://example.com/materials/parts_of_speech.pdf"
+        ],
+        "homework": [9]
+      },
+      {
+        "id": 3,
+        "title": "Синтаксис и пунктуация",
+        "video": "https://www.youtube.com/embed/7RhFlrACEbI",
+        "materials": [
+          "https://example.com/materials/syntax.pdf",
+          "https://example.com/materials/punctuation_rules.pdf"
+        ],
+        "homework": [10, 11]
+      },
+      {
+        "id": 4,
+        "title": "Стилистика и культура речи",
+        "video": "https://www.youtube.com/embed/7RhFlrACEbI",
+        "materials": [
+          "https://example.com/materials/stylistics.pdf"
+        ],
+        "homework": [12]
+      }
+    ]
+  }
+}
+  
