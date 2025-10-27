@@ -1,6 +1,7 @@
 const LS_USERS = 'edumvp_users'
 const LS_CURRENT = 'edumvp_current_user'
 const LS_STATS = 'edumvp_stats'
+const LS_NOTIFICATIONS = 'edumvp_notifications'
 
 const normalize = (value) => (value || '').trim()
 const normalizeEmail = (value) => normalize(value).toLowerCase()
@@ -67,6 +68,7 @@ export function initStore() {
     save(LS_USERS, normalized)
   }
   if (!load(LS_STATS, null)) save(LS_STATS, {})
+  if (!load(LS_NOTIFICATIONS, null)) save(LS_NOTIFICATIONS, {})
 }
 
 export const getUsers = () => load(LS_USERS, []).map(ensureUserStructure)
@@ -241,4 +243,68 @@ export function getStats(username) {
   const key = normalize(username) || 'guest-anon'
   const stats = load(LS_STATS, {})
   return stats[key] || { total: 0, correct: 0, subjects: {} }
+}
+
+// Уведомления
+export function addNotification(username, notification) {
+  const normalizedUsername = normalizeEmail(username)
+  if (!normalizedUsername) return
+  
+  const notifications = load(LS_NOTIFICATIONS, {})
+  if (!notifications[normalizedUsername]) {
+    notifications[normalizedUsername] = []
+  }
+  
+  notifications[normalizedUsername].unshift({
+    id: Date.now(),
+    text: notification.text,
+    emoji: notification.emoji || '📢',
+    unread: true,
+    timestamp: new Date().toISOString()
+  })
+  
+  save(LS_NOTIFICATIONS, notifications)
+}
+
+export function getNotifications(username) {
+  const normalizedUsername = normalizeEmail(username)
+  if (!normalizedUsername) return []
+  
+  const notifications = load(LS_NOTIFICATIONS, {})
+  return notifications[normalizedUsername] || []
+}
+
+export function getUnreadCount(username) {
+  const notifications = getNotifications(username)
+  return notifications.filter(n => n.unread).length
+}
+
+export function markNotificationAsRead(username, notificationId) {
+  const normalizedUsername = normalizeEmail(username)
+  if (!normalizedUsername) return false
+  
+  const notifications = load(LS_NOTIFICATIONS, {})
+  const userNotifications = notifications[normalizedUsername] || []
+  
+  const notification = userNotifications.find(n => n.id === notificationId)
+  if (notification && notification.unread) {
+    notification.unread = false
+    save(LS_NOTIFICATIONS, notifications)
+    return true
+  }
+  return false
+}
+
+export function markAllNotificationsAsRead(username) {
+  const normalizedUsername = normalizeEmail(username)
+  if (!normalizedUsername) return
+  
+  const notifications = load(LS_NOTIFICATIONS, {})
+  const userNotifications = notifications[normalizedUsername] || []
+  
+  userNotifications.forEach(n => {
+    n.unread = false
+  })
+  
+  save(LS_NOTIFICATIONS, notifications)
 }

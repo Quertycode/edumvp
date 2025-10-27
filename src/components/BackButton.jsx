@@ -9,7 +9,7 @@ export default function BackButton() {
   }
 
   return (
-    <div className='fixed left-4 top-20 z-10'>
+    <div className='hidden md:block fixed left-4 top-20 z-10'>
       <Link
         to='/'
         className='inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors'

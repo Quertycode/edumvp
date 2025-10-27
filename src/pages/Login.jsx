@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Card from '../components/Card'
 import { getCurrentUser, initStore, login, register } from '../utils/userStore'
+import { createTestNotifications } from '../utils/addTestNotifications'
 
 export default function Login() {
   const [isReg, setIsReg] = useState(false)
@@ -39,6 +40,10 @@ export default function Login() {
       } else {
         login(normalizedEmail, password.trim())
       }
+      
+      // Добавляем тестовые уведомления при входе
+      createTestNotifications(normalizedEmail)
+      
       navigate('/')
     } catch (err) {
       setError(err.message || 'Ошибка')
