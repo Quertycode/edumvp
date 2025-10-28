@@ -1,32 +1,29 @@
-import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import Card from '../components/Card'
+import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { getCurrentUser, getUserFull } from '../utils/userStore'
 import coursesData from '../data/courses.json'
 import tasksData from '../data/tasks.json'
+import Card from '../components/Card'
+import { useLessonProgress } from '../modules/lesson/hooks/useLessonProgress'
+import LessonHeader from '../modules/lesson/components/LessonHeader'
+import LessonTabs from '../modules/lesson/components/LessonTabs'
+import VideoTab from '../modules/lesson/components/VideoTab'
+import HomeworkTab from '../modules/lesson/components/HomeworkTab'
+import MaterialsTab from '../modules/lesson/components/MaterialsTab'
 
+/**
+ * Страница деталей урока - композиция модульных компонентов
+ * Рефакторинг: Разбит на модульные компоненты
+ */
 export default function LessonDetails() {
   const { subject, lessonId } = useParams()
   const user = getCurrentUser()
   const fullUser = user ? getUserFull(user.username) : null
   const [activeTab, setActiveTab] = useState('video')
-  const [progress, setProgress] = useState({})
-  const [homeworkAnswers, setHomeworkAnswers] = useState({})
+  
+  const { markAsWatched, handleHomeworkSubmit, getTaskAnswer } = useLessonProgress(subject, lessonId)
 
-  useEffect(() => {
-    // Загружаем прогресс пользователя
-    const savedProgress = localStorage.getItem(`progress_${user?.username}`)
-    if (savedProgress) {
-      setProgress(JSON.parse(savedProgress))
-    }
-
-    // Загружаем ответы на домашние задания
-    const savedAnswers = localStorage.getItem(`homework_${user?.username}`)
-    if (savedAnswers) {
-      setHomeworkAnswers(JSON.parse(savedAnswers))
-    }
-  }, [user])
-
+  // Проверка доступа
   if (!user) {
     return <Card title='Доступ запрещен'>Пожалуйста, войдите в систему.</Card>
   }
@@ -39,6 +36,7 @@ export default function LessonDetails() {
     return <Card title='Доступ запрещен'>У вас нет доступа к этому курсу.</Card>
   }
 
+  // Получение данных
   const course = coursesData[subject]
   if (!course) {
     return <Card title='Ошибка'>Курс не найден.</Card>
@@ -53,171 +51,27 @@ export default function LessonDetails() {
     lesson.homework.includes(task.id) && task.subject === subject
   )
 
-  const markAsWatched = () => {
-    const key = `${subject}_${lessonId}`
-    const newProgress = {
-      ...progress,
-      [key]: {
-        ...progress[key],
-        watched: true
-      }
-    }
-    setProgress(newProgress)
-    localStorage.setItem(`progress_${user.username}`, JSON.stringify(newProgress))
-  }
-
-  const handleHomeworkSubmit = (taskId, answer) => {
-    const key = `${subject}_${lessonId}_${taskId}`
-    const newAnswers = {
-      ...homeworkAnswers,
-      [key]: answer
-    }
-    setHomeworkAnswers(newAnswers)
-    localStorage.setItem(`homework_${user.username}`, JSON.stringify(newAnswers))
-
-    // Проверяем, все ли задания выполнены
-    const allCompleted = homeworkTasks.every(task => {
-      const answerKey = `${subject}_${lessonId}_${task.id}`
-      return newAnswers[answerKey]
-    })
-
-    if (allCompleted) {
-      const progressKey = `${subject}_${lessonId}`
-      const newProgress = {
-        ...progress,
-        [progressKey]: {
-          ...progress[progressKey],
-          completed: true
-        }
-      }
-      setProgress(newProgress)
-      localStorage.setItem(`progress_${user.username}`, JSON.stringify(newProgress))
-    }
-  }
-
-  const getTaskAnswer = (taskId) => {
-    const key = `${subject}_${lessonId}_${taskId}`
-    return homeworkAnswers[key] || ''
-  }
-
-  const isTaskCorrect = (task, answer) => {
-    if (!answer) return false
-    return task.answer.some(correctAnswer => 
-      correctAnswer.toLowerCase().trim() === answer.toLowerCase().trim()
-    )
-  }
-
-  const tabs = [
-    { id: 'video', label: 'Видео' },
-    { id: 'homework', label: 'Домашняя работа' },
-    { id: 'materials', label: 'Материалы' }
-  ]
-
   return (
     <div className='space-y-4'>
-      <Card title={lesson.title}>
-        <div className='mb-4'>
-          <Link 
-            to={`/courses/${subject}`}
-            className='text-cyan-600 hover:text-cyan-800 text-sm'
-          >
-            ← Назад к занятиям
-          </Link>
-        </div>
+      <LessonHeader lesson={lesson} subject={subject}>
+        <LessonTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Табы */}
-        <div className='flex gap-2 mb-6'>
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-xl transition ${
-                activeTab === tab.id
-                  ? 'bg-cyan-600 text-white'
-                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Контент табов */}
         {activeTab === 'video' && (
-          <div className='space-y-4'>
-            <div className='aspect-video bg-gray-100 rounded-xl overflow-hidden'>
-              <iframe
-                src={lesson.video}
-                className='w-full h-full'
-                allowFullScreen
-                title={lesson.title}
-              />
-            </div>
-            <button
-              onClick={markAsWatched}
-              className='px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition'
-            >
-              Отметить как просмотренное
-            </button>
-          </div>
+          <VideoTab lesson={lesson} onMarkAsWatched={markAsWatched} />
         )}
 
         {activeTab === 'homework' && (
-          <div className='space-y-4'>
-            <h3 className='text-lg font-semibold'>Домашнее задание</h3>
-            {homeworkTasks.map(task => {
-              const answer = getTaskAnswer(task.id)
-              const isCorrect = isTaskCorrect(task, answer)
-              
-              return (
-                <div key={task.id} className='border rounded-xl p-4 bg-white'>
-                  <p className='font-medium mb-3'>{task.question}</p>
-                  <div className='space-y-2'>
-                    <input
-                      type={task.type === 'numeric' ? 'number' : 'text'}
-                      value={answer}
-                      onChange={(e) => handleHomeworkSubmit(task.id, e.target.value)}
-                      placeholder='Введите ответ...'
-                      className='w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500'
-                    />
-                    {answer && (
-                      <div className={`text-sm ${
-                        isCorrect ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {isCorrect ? '✓ Правильно!' : '✗ Неправильно'}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          <HomeworkTab 
+            tasks={homeworkTasks}
+            getTaskAnswer={getTaskAnswer}
+            handleSubmit={handleHomeworkSubmit}
+          />
         )}
 
         {activeTab === 'materials' && (
-          <div className='space-y-4'>
-            <h3 className='text-lg font-semibold'>Материалы к занятию</h3>
-            {lesson.materials.map((material, index) => (
-              <div key={index} className='border rounded-xl p-4 bg-white'>
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <p className='font-medium'>Материал {index + 1}</p>
-                    <p className='text-sm text-gray-600'>{material}</p>
-                  </div>
-                  <a
-                    href={material}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='px-4 py-2 bg-cyan-600 text-white rounded-xl hover:bg-cyan-700 transition'
-                  >
-                    Скачать
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
+          <MaterialsTab materials={lesson.materials} />
         )}
-      </Card>
+      </LessonHeader>
     </div>
   )
 }
