@@ -61,7 +61,7 @@ export default function Login() {
   }
 
   return (
-    <div className='max-w-md mx-auto'>
+    <div className='max-w-md mx-auto w-full px-4 md:px-0'>
       <Card title={isReg ? 'Регистрация' : 'Вход'}>
         <form onSubmit={submit} className='space-y-3'>
           <input

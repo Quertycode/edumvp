@@ -124,8 +124,8 @@ export default function AdminPanel() {
       </Card>
 
       <Card title='Пользователи'>
-        <div className='overflow-x-auto'>
-          <table className='w-full text-sm'>
+        <div className='overflow-x-auto -mx-2 md:mx-0'>
+          <table className='w-full text-sm min-w-[640px]'>
             <thead>
               <tr className='text-left text-gray-500'>
                 <th className='py-2'>Имя</th>

@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  student
+  admin
+  teacher
+  parent
+  guest
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  birthdate String?
+  avatar    String?
+  role      Role     @default(guest)
+  
+  // Access permissions
+  accessMath    Boolean @default(false)
+  accessRussian Boolean @default(false)
+  
+  // Relations
+  stats         UserStats?
+  notifications Notification[]
+  courses       UserCourse[]
+  progress      CourseProgress[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserStats {
+  id          String @id @default(cuid())
+  userId      String @unique
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  totalAnswers     Int    @default(0)
+  correctAnswers    Int    @default(0)
+  mathTotal         Int    @default(0)
+  mathCorrect       Int    @default(0)
+  russianTotal      Int    @default(0)
+  russianCorrect    Int    @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  text      String
+  emoji     String   @default("📢")
+  unread    Boolean  @default(true)
+  
+  createdAt DateTime @default(now())
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  subject     String   @unique
+  title       String
+  description String?
+  
+  lessons     Lesson[]
+  users       UserCourse[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserCourse {
+  id       String @id @default(cuid())
+  userId   String
+  courseId String
+  
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, courseId])
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  title       String
+  video       String?
+  materials   String[]
+  homework    Int[]
+  
+  progress    CourseProgress[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CourseProgress {
+  id        String @id @default(cuid())
+  userId    String
+  lessonId  String
+  
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson    Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  
+  completed Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, lessonId])
+}
+
+model Task {
+  id       String @id @default(cuid())
+  subject  String
+  type     String
+  question String
+  answer   String[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

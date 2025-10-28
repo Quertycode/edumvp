@@ -20,81 +20,85 @@ export default function App() {
       <div className='min-h-screen bg-gradient-to-b from-cyan-50 to-white text-gray-800 flex flex-col'>
         <Header />
         <BackButton />
-        <main className='max-w-full px-8 mx-auto flex-1 flex flex-col'>
-          <div className='flex-1 p-6'>
-            <Routes>
-            <Route 
-              path='/' 
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              } 
-            />
-            <Route path='/login' element={<Login />} />
-            <Route 
-              path='/tasks' 
-              element={
-                <ProtectedRoute>
-                  <Tasks />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path='/account' 
-              element={
-                <ProtectedRoute>
-                  <Account />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path='/courses' 
-              element={
-                <ProtectedRoute>
-                  <Courses />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path='/knowledge-base' 
-              element={
-                <ProtectedRoute>
-                  <KnowledgeBase />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path='/courses/:subject' 
-              element={
-                <ProtectedRoute roles={['student', 'admin']}>
-                  <CourseLessons />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path='/courses/:subject/:lessonId' 
-              element={
-                <ProtectedRoute roles={['student', 'admin']}>
-                  <LessonDetails />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path='/admin' 
-              element={
-                <ProtectedRoute roles={['admin']}>
-                  <AdminPanel />
-                </ProtectedRoute>
-              } 
-            />
-            <Route path='/404' element={<NotFound />} />
-            <Route path='*' element={<Navigate to='/404' replace />} />
-            </Routes>
+        <main className='flex-1 flex flex-col min-h-0'>
+          <div className='w-full max-w-[1280px] mx-auto px-4 md:px-6 h-full flex-1 flex flex-col min-h-0'>
+            <div className='flex-1 min-h-0'>
+              <Routes>
+              <Route 
+                path='/' 
+                element={
+                  <ProtectedRoute>
+                    <Home />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path='/login' element={<div className='p-4 md:p-6'><Login /></div>} />
+              <Route 
+                path='/tasks' 
+                element={
+                  <ProtectedRoute>
+                    <div className='p-4 md:p-6'><Tasks /></div>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path='/account' 
+                element={
+                  <ProtectedRoute>
+                    <div className='p-4 md:p-6'><Account /></div>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path='/courses' 
+                element={
+                  <ProtectedRoute>
+                    <div className='p-4 md:p-6'><Courses /></div>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path='/knowledge-base' 
+                element={
+                  <ProtectedRoute>
+                    <div className='p-4 md:p-6'><KnowledgeBase /></div>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path='/courses/:subject' 
+                element={
+                  <ProtectedRoute roles={['student', 'admin']}>
+                    <div className='p-4 md:p-6'><CourseLessons /></div>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path='/courses/:subject/:lessonId' 
+                element={
+                  <ProtectedRoute roles={['student', 'admin']}>
+                    <div className='p-4 md:p-6'><LessonDetails /></div>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path='/admin' 
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <div className='p-4 md:p-6'><AdminPanel /></div>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path='/404' element={<NotFound />} />
+              <Route path='*' element={<Navigate to='/404' replace />} />
+              </Routes>
+            </div>
           </div>
         </main>
         <footer className='text-center py-6 text-cyan-700/80 text-sm border-t border-cyan-100'>
-          © {new Date().getFullYear()} Эврика!
+          <div className='w-full max-w-[1280px] mx-auto px-4 md:px-6'>
+            © {new Date().getFullYear()} Эврика!
+          </div>
         </footer>
       </div>
     </BrowserRouter>
