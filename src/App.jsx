@@ -15,8 +15,10 @@ import KnowledgeBase from './pages/KnowledgeBase'
 import NotFound from './pages/NotFound'
 
 export default function App() {
+  const basename = import.meta.env.BASE_URL || '/'
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <div className='min-h-screen bg-gradient-to-b from-cyan-50 to-white text-gray-800 flex flex-col'>
         <Header />
         <BackButton />

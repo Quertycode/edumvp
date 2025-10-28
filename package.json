@@ -9,6 +9,7 @@
     "build": "vite build",
     "build:server": "cd server && npm run build",
     "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
