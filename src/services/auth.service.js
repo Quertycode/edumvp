@@ -12,7 +12,6 @@ import apiClient from './api.js'
  * @property {string} password
  * @property {string} [firstName]
  * @property {string} [lastName]
- * @property {string} [birthdate]
  */
 
 export const authService = {

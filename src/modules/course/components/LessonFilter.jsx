@@ -5,7 +5,7 @@
  */
 export default function LessonFilter({ filter, onFilterChange }) {
   return (
-    <div className='flex gap-2 mb-4'>
+    <div className='flex gap-2'>
       <button
         onClick={() => onFilterChange('active')}
         className={`px-4 py-2 rounded-xl transition ${

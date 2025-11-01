@@ -23,7 +23,7 @@ export default function App() {
         <Header />
         <BackButton />
         <main className='flex-1 flex flex-col min-h-0'>
-          <div className='w-full max-w-[1280px] mx-auto px-4 md:px-6 h-full flex-1 flex flex-col min-h-0'>
+          <div className='w-full max-w-[1600px] mx-auto px-4 md:px-6 h-full flex-1 flex flex-col min-h-0'>
             <div className='flex-1 min-h-0'>
               <Routes>
               <Route 
@@ -60,7 +60,7 @@ export default function App() {
                 } 
               />
               <Route 
-                path='/knowledge-base' 
+                path='/knowledge-base/:subject' 
                 element={
                   <ProtectedRoute>
                     <div className='p-4 md:p-6'><KnowledgeBase /></div>
@@ -91,14 +91,14 @@ export default function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route path='/404' element={<NotFound />} />
+              <Route path='/404' element={<div className='p-4 md:p-6'><NotFound /></div>} />
               <Route path='*' element={<Navigate to='/404' replace />} />
               </Routes>
             </div>
           </div>
         </main>
         <footer className='text-center py-6 text-cyan-700/80 text-sm border-t border-cyan-100'>
-          <div className='w-full max-w-[1280px] mx-auto px-4 md:px-6'>
+          <div className='w-full max-w-[1600px] mx-auto px-4 md:px-6'>
             © {new Date().getFullYear()} Эврика!
           </div>
         </footer>

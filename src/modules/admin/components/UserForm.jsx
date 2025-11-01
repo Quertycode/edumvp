@@ -6,7 +6,6 @@ const emptyForm = {
   password: '',
   firstName: '',
   lastName: '',
-  birthdate: '',
   role: 'guest'
 }
 
@@ -57,13 +56,6 @@ export default function UserForm({ onSubmit }) {
             placeholder='Фамилия'
             className='border border-cyan-300 rounded-lg px-3 py-2'
             type='text'
-          />
-          <input
-            value={form.birthdate}
-            onChange={(event) => setForm({ ...form, birthdate: event.target.value })}
-            placeholder='Дата рождения'
-            className='border border-cyan-300 rounded-lg px-3 py-2'
-            type='date'
           />
           <select
             value={form.role}

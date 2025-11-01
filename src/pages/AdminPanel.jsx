@@ -24,7 +24,6 @@ export default function AdminPanel() {
       password: formData.password,
       firstName: formData.firstName,
       lastName: formData.lastName,
-      birthdate: formData.birthdate,
       role: formData.role
     })
     reload()

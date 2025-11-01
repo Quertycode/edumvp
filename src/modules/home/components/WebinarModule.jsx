@@ -15,7 +15,7 @@ export default function WebinarModule() {
   return (
     <Card className='h-full flex flex-col p-0 overflow-hidden'>
       {/* Header Section */}
-      <div className='px-3 pt-4 pb-3'>
+      <div className='px-3 pt-0 pb-3'>
         <div className='text-center mb-2'>
           <h2 className='text-lg md:text-xl font-semibold text-cyan-800 whitespace-nowrap'>
             Ближайший вебинар

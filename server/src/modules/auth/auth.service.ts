@@ -17,14 +17,32 @@ export class AuthService {
     firstName?: string
     lastName?: string
     birthdate?: string
+    grade?: number
+    directionIds?: string[]
   }) {
-    const { password, ...restData } = userData
+    const { password, directionIds, ...restData } = userData
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = await this.prisma.user.create({
       data: {
         ...restData,
         password: hashedPassword,
+        directions: directionIds
+          ? {
+              create: directionIds.map((directionId) => ({
+                direction: {
+                  connect: { id: directionId },
+                },
+              })),
+            }
+          : undefined,
+      },
+      include: {
+        directions: {
+          include: {
+            direction: true,
+          },
+        },
       },
     })
 

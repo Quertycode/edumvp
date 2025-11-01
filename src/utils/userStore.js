@@ -6,10 +6,14 @@ const LS_NOTIFICATIONS = 'edumvp_notifications'
 const normalize = (value) => (value || '').trim()
 const normalizeEmail = (value) => normalize(value).toLowerCase()
 
-const ensureAccess = (access = {}) => ({
-  math: { enabled: Boolean(access.math?.enabled) },
-  russian: { enabled: Boolean(access.russian?.enabled) }
-})
+const ensureAccess = (access = {}) => {
+  const subjects = ['math', 'russian', 'biology', 'history', 'english']
+  const result = {}
+  subjects.forEach(subject => {
+    result[subject] = { enabled: Boolean(access[subject]?.enabled) }
+  })
+  return result
+}
 
 const ensureEmail = (value) => {
   const normalized = normalizeEmail(value)
@@ -22,16 +26,26 @@ const ensureUserStructure = (user) => {
   if (!user) return user
   const rawEmail = normalize(user.email) || normalize(user.username)
   const email = ensureEmail(rawEmail)
+  
+  // Вычисляем текущий класс на основе даты создания
+  const createdAt = user.createdAt || new Date().toISOString()
+  const currentGrade = user.baseGrade 
+    ? calculateCurrentGrade(user.baseGrade, createdAt) 
+    : user.grade
+  
   return {
     ...user,
     username: normalize(user.username) || rawEmail || email,
     email,
     firstName: user.firstName ?? '',
     lastName: user.lastName ?? '',
-    birthdate: user.birthdate ?? '',
     avatar: user.avatar ?? '',
+    baseGrade: user.baseGrade ?? user.grade ?? null,
+    grade: currentGrade,
+    directions: user.directions ?? [],
     access: ensureAccess(user.access),
-    password: user.password ?? ''
+    password: user.password ?? '',
+    createdAt
   }
 }
 
@@ -45,6 +59,40 @@ const load = (key, fallback) => {
 
 const save = (key, value) => localStorage.setItem(key, JSON.stringify(value))
 
+/**
+ * Вычислить текущий класс на основе даты создания аккаунта
+ * Учебный год: 01.08 - 31.07
+ */
+function calculateCurrentGrade(baseGrade, createdAt) {
+  if (!baseGrade || !createdAt) return baseGrade
+  
+  const createDate = new Date(createdAt)
+  const now = new Date()
+  
+  // Функция для определения учебного года по дате
+  const getSchoolYear = (date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth() // 0-11, июль = 6
+    // Если дата в июле (месяц 6) или раньше, текущий учебный год начался в прошлом году
+    // Если август (месяц 7) или позже, учебный год начался в текущем году
+    return month <= 6 ? year - 1 : year
+  }
+  
+  // Определяем текущий учебный год
+  const currentSchoolYear = getSchoolYear(now)
+  
+  // Определяем учебный год создания аккаунта
+  const accountSchoolYear = getSchoolYear(createDate)
+  
+  // Вычисляем количество прошедших учебных лет
+  const yearsPassed = currentSchoolYear - accountSchoolYear
+  
+  const newGrade = baseGrade + yearsPassed
+  
+  // Если класс > 11, возвращаем null (выпускник)
+  return newGrade > 11 ? null : newGrade
+}
+
 export function initStore() {
   const existingUsers = load(LS_USERS, null)
   if (!existingUsers) {
@@ -55,7 +103,6 @@ export function initStore() {
         password: 'admin',
         firstName: 'Системный',
         lastName: 'Администратор',
-        birthdate: '',
         role: 'admin',
         access: {
           math: { enabled: true },
@@ -77,11 +124,14 @@ export const getCurrentUser = () => load(LS_CURRENT, null)
 export const setCurrentUser = (user) => save(LS_CURRENT, user)
 export const logout = () => localStorage.removeItem(LS_CURRENT)
 
-export function register(email, password, firstName, lastName, birthdate) {
+export function register(email, password, firstName, lastName, grade, directions) {
   const normalizedEmail = ensureEmail(email)
   if (!normalizedEmail) throw new Error('Укажите электронную почту')
   if (!normalize(email).includes('@')) throw new Error('Введите корректный адрес электронной почты')
   if (!normalize(password)) throw new Error('Введите пароль')
+  if (!grade || grade < 8 || grade > 11) throw new Error('Выберите класс (8-11)')
+  if (!directions || directions.length === 0) throw new Error('Выберите хотя бы один предмет')
+  
   const users = getUsers()
   if (
     users.find(
@@ -98,12 +148,12 @@ export function register(email, password, firstName, lastName, birthdate) {
     password,
     firstName: normalize(firstName),
     lastName: normalize(lastName),
-    birthdate,
+    baseGrade: grade,
+    grade,
+    directions,
     role: 'guest',
-    access: {
-      math: { enabled: false },
-      russian: { enabled: false }
-    }
+    access: {},
+    createdAt: new Date().toISOString()
   })
   users.push(user)
   setUsers(users)
@@ -113,8 +163,9 @@ export function register(email, password, firstName, lastName, birthdate) {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    birthdate: user.birthdate,
-    avatar: user.avatar
+    avatar: user.avatar,
+    grade: user.grade,
+    directions: user.directions
   })
   return user
 }
@@ -139,8 +190,9 @@ export function login(email, password) {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    birthdate: user.birthdate,
-    avatar: user.avatar
+    avatar: user.avatar,
+    grade: user.grade,
+    directions: user.directions
   })
   return user
 }
@@ -162,8 +214,9 @@ export function updateUserRole(username, role) {
         email: full.email,
         firstName: full.firstName,
         lastName: full.lastName,
-        birthdate: full.birthdate,
-        avatar: full.avatar
+        avatar: full.avatar,
+        grade: full.grade,
+        directions: full.directions
       })
     }
   }
@@ -177,10 +230,7 @@ export function upsertUser(obj) {
     ...obj,
     username: normalizedEmail,
     email: normalizedEmail,
-    access: obj.access ?? {
-      math: { enabled: false },
-      russian: { enabled: false }
-    }
+    access: obj.access ?? {}
   })
   const index = users.findIndex(
     (user) => normalizeEmail(user.username) === normalizedEmail
@@ -197,8 +247,9 @@ export function upsertUser(obj) {
       email: full.email,
       firstName: full.firstName,
       lastName: full.lastName,
-      birthdate: full.birthdate,
-      avatar: full.avatar
+      avatar: full.avatar,
+      grade: full.grade,
+      directions: full.directions
     })
   }
 }

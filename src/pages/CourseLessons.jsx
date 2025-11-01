@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Card from '../components/Card'
 import { getCurrentUser, getUserFull } from '../utils/userStore'
 import coursesData from '../data/courses.json'
@@ -12,6 +12,7 @@ import LessonFilter from '../modules/course/components/LessonFilter'
  */
 export default function CourseLessons() {
   const { subject } = useParams()
+  const navigate = useNavigate()
   const user = getCurrentUser()
   const fullUser = user ? getUserFull(user.username) : null
   const [filter, setFilter] = useState('active')
@@ -29,7 +30,7 @@ export default function CourseLessons() {
   }
 
   if (user.role === 'guest') {
-    return <Card title='Доступ запрещен'>Курсы недоступны для гостя.</Card>
+    return <Card title='Доступ запрещен'>Предметы недоступны для гостя.</Card>
   }
 
   if (!fullUser?.access?.[subject]?.enabled) {
@@ -55,8 +56,14 @@ export default function CourseLessons() {
   return (
     <div className='space-y-4'>
       <Card title={`${course.title} - Занятия`}>
-        <div className='mb-4'>
+        <div className='mb-4 flex justify-between items-center'>
           <LessonFilter filter={filter} onFilterChange={setFilter} />
+          <button
+            onClick={() => navigate(`/knowledge-base/${subject}`)}
+            className='px-4 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600 transition'
+          >
+            Материалы по предмету
+          </button>
         </div>
 
         <div className='space-y-3'>

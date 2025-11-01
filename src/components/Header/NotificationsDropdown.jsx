@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 /**
  * Компонент выпадающего списка уведомлений
@@ -18,6 +18,21 @@ export default function NotificationsDropdown({
   onMarkAsRead 
 }) {
   const dropdownRef = useRef(null)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+  // Проверяем размер экрана
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 1835)
+    }
+
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize)
+    }
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -46,10 +61,10 @@ export default function NotificationsDropdown({
   return (
     <div
       ref={dropdownRef}
-      className='absolute right-0 translate-x-1.5 mt-2 w-80 bg-white border border-gray-100 shadow-lg rounded-xl overflow-visible z-50'
+      className={`absolute ${isSmallScreen ? 'left-0 -translate-x-1.5' : 'right-0 translate-x-1.5'} mt-2 w-80 bg-white border border-gray-100 shadow-lg rounded-xl overflow-visible z-50`}
     >
       {/* Треугольный указатель */}
-      <div className='absolute -top-1.5 right-4 w-3 h-3 bg-white border-l border-t border-gray-100 transform rotate-45'></div>
+      <div className={`absolute -top-1.5 ${isSmallScreen ? 'left-4' : 'right-4'} w-3 h-3 bg-white border-l border-t border-gray-100 transform rotate-45`}></div>
       
       <div className='bg-white rounded-xl overflow-hidden'>
         <div className='p-3 border-b border-gray-100 font-semibold text-gray-800 text-center'>

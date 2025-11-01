@@ -17,25 +17,22 @@ export default function Navigation() {
     <nav className='w-full md:w-auto flex gap-1 md:gap-2 items-center md:items-start order-3 md:order-3 overflow-x-auto pb-2 md:pb-0'>
       <NavLink
         to='/courses'
+        state={{ fromHeader: true }}
         className={({ isActive }) => (isActive ? activeLinkBase : linkBase)}
       >
-        Курсы
+        Предметы
       </NavLink>
       <NavLink
         to='/tasks'
+        state={{ fromHeader: true }}
         className={({ isActive }) => (isActive ? activeLinkBase : linkBase)}
       >
-        Банк заданий
-      </NavLink>
-      <NavLink
-        to='/knowledge-base'
-        className={({ isActive }) => (isActive ? activeLinkBase : linkBase)}
-      >
-        База знаний
+        Тренажер
       </NavLink>
       {user?.role === 'admin' && (
         <NavLink
           to='/admin'
+          state={{ fromHeader: true }}
           className={({ isActive }) => (isActive ? activeLinkBase : linkBase)}
         >
           Админ
