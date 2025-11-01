@@ -2,7 +2,7 @@ import Card from '../../../components/Card'
 import { Link } from 'react-router-dom'
 
 /**
- * Модуль "Курсы"
+ * Модуль "Предметы"
  * Отображает информацию о доступных курсах
  */
 export default function CoursesModule() {

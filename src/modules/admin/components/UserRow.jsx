@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { deleteUser, setAccess, updateUserRole, upsertUser } from '../../../utils/userStore'
+import { AVAILABLE_DIRECTIONS, getUserDirectionsWithSubjects } from '../../../utils/userHelpers'
 
 /**
  * Строка пользователя в таблице
@@ -6,6 +8,9 @@ import { deleteUser, setAccess, updateUserRole, upsertUser } from '../../../util
  * @param {function} onUpdate - Функция обновления
  */
 export default function UserRow({ user, onUpdate }) {
+  const [isEditingDirections, setIsEditingDirections] = useState(false)
+  const [selectedDirections, setSelectedDirections] = useState(user.directions || [])
+
   const updateUserName = (username, field, value) => {
     const updatedUser = {
       ...user,
@@ -33,6 +38,23 @@ export default function UserRow({ user, onUpdate }) {
     deleteUser(user.username)
     onUpdate()
   }
+
+  const handleDirectionsSave = () => {
+    const updatedUser = { ...user, directions: selectedDirections }
+    upsertUser(updatedUser)
+    setIsEditingDirections(false)
+    onUpdate()
+  }
+
+  const toggleDirection = (directionId) => {
+    setSelectedDirections(prev =>
+      prev.includes(directionId)
+        ? prev.filter(id => id !== directionId)
+        : [...prev, directionId]
+    )
+  }
+
+  const userDirections = getUserDirectionsWithSubjects(user.directions || [])
 
   return (
     <tr key={user.username} className='border-t'>

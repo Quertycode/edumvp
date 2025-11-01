@@ -46,7 +46,7 @@ export default function Header() {
 
   return (
     <header className='sticky top-0 z-20 bg-white/70 backdrop-blur border-b border-cyan-100 min-h-16'>
-      <div className='w-full max-w-[1280px] mx-auto px-4 md:px-6 py-2 md:py-0 md:h-16 flex flex-col md:flex-row items-start md:items-center justify-between relative'>
+      <div className='w-full max-w-[1600px] mx-auto px-4 md:px-6 py-2 md:py-0 md:h-16 flex flex-col md:flex-row items-start md:items-center justify-between relative'>
         {user ? (
           <>
             {/* Для авторизованных: полный Header */}

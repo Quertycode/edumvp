@@ -17,6 +17,7 @@ export default function UsersTable({ users, onUpdate }) {
               <th className='py-2'>Фамилия</th>
               <th className='py-2'>Почта</th>
               <th>Роль</th>
+              <th>Предметы</th>
               <th>Русский</th>
               <th>Математика</th>
               <th></th>
