@@ -7,11 +7,11 @@ export default function Courses() {
   const full = user ? getUserFull(user.username) : null
 
   if (!user) {
-    return <Card title='Курсы недоступны'>Пожалуйста, войдите в систему.</Card>
+    return <Card title='Предметы недоступны'>Пожалуйста, войдите в систему.</Card>
   }
 
   if (user.role === 'guest') {
-    return <Card title='Курсы недоступны для гостя'>Чтобы получить доступ к курсам, оформите доступ или дождитесь активации админом.</Card>
+    return <Card title='Предметы недоступны для гостя'>Чтобы получить доступ к предметам, оформите доступ или дождитесь активации админом.</Card>
   }
 
   const items = [
@@ -21,7 +21,7 @@ export default function Courses() {
 
   return (
     <div className='space-y-4'>
-      <Card title='Курсы'>
+      <Card title='Предметы'>
         <div className='grid sm:grid-cols-2 gap-4'>
           {items.map(c => {
             const allowed = full?.access?.[c.key]?.enabled

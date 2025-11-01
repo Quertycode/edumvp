@@ -19,7 +19,7 @@ export default function Navigation() {
         to='/courses'
         className={({ isActive }) => (isActive ? activeLinkBase : linkBase)}
       >
-        Курсы
+        Предметы
       </NavLink>
       <NavLink
         to='/tasks'

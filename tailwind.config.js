@@ -6,6 +6,9 @@ export default {
     ],
   theme: {
     extend: {
+      screens: {
+        'xl-custom': '1780px',
+      },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },

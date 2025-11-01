@@ -6,7 +6,7 @@
 1. **Разбивать большие компоненты** на мелкие модули (макс. 100 строк на файл)
 2. **Использовать Tailwind CSS** для всех стилей (никогда inline styles)
 3. **Применять адаптивность**: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
-4. **Контейнеры**: `max-w-[1280px] mx-auto px-6`
+4. **Контейнеры**: `max-w-[1600px] mx-auto px-6`
 5. **Создавать feature-based структуру** в `src/modules/`
 6. **Выносить логику** в custom hooks в `src/modules/{feature}/hooks/`
 7. **Тестировать на всех разрешениях**: mobile (375px), tablet (768px), desktop (1280px)

@@ -29,7 +29,7 @@ export default function CourseLessons() {
   }
 
   if (user.role === 'guest') {
-    return <Card title='Доступ запрещен'>Курсы недоступны для гостя.</Card>
+    return <Card title='Доступ запрещен'>Предметы недоступны для гостя.</Card>
   }
 
   if (!fullUser?.access?.[subject]?.enabled) {

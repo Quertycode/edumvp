@@ -30,6 +30,8 @@ const ensureUserStructure = (user) => {
     lastName: user.lastName ?? '',
     birthdate: user.birthdate ?? '',
     avatar: user.avatar ?? '',
+    grade: user.grade ?? null,
+    directions: user.directions ?? [],
     access: ensureAccess(user.access),
     password: user.password ?? ''
   }
@@ -77,11 +79,14 @@ export const getCurrentUser = () => load(LS_CURRENT, null)
 export const setCurrentUser = (user) => save(LS_CURRENT, user)
 export const logout = () => localStorage.removeItem(LS_CURRENT)
 
-export function register(email, password, firstName, lastName, birthdate) {
+export function register(email, password, firstName, lastName, grade, directions) {
   const normalizedEmail = ensureEmail(email)
   if (!normalizedEmail) throw new Error('Укажите электронную почту')
   if (!normalize(email).includes('@')) throw new Error('Введите корректный адрес электронной почты')
   if (!normalize(password)) throw new Error('Введите пароль')
+  if (!grade || grade < 8 || grade > 11) throw new Error('Выберите класс (8-11)')
+  if (!directions || directions.length === 0) throw new Error('Выберите хотя бы один предмет')
+  
   const users = getUsers()
   if (
     users.find(
@@ -98,7 +103,9 @@ export function register(email, password, firstName, lastName, birthdate) {
     password,
     firstName: normalize(firstName),
     lastName: normalize(lastName),
-    birthdate,
+    birthdate: '',
+    grade,
+    directions,
     role: 'guest',
     access: {
       math: { enabled: false },
@@ -114,7 +121,9 @@ export function register(email, password, firstName, lastName, birthdate) {
     firstName: user.firstName,
     lastName: user.lastName,
     birthdate: user.birthdate,
-    avatar: user.avatar
+    avatar: user.avatar,
+    grade: user.grade,
+    directions: user.directions
   })
   return user
 }
@@ -140,7 +149,9 @@ export function login(email, password) {
     firstName: user.firstName,
     lastName: user.lastName,
     birthdate: user.birthdate,
-    avatar: user.avatar
+    avatar: user.avatar,
+    grade: user.grade,
+    directions: user.directions
   })
   return user
 }
@@ -163,7 +174,9 @@ export function updateUserRole(username, role) {
         firstName: full.firstName,
         lastName: full.lastName,
         birthdate: full.birthdate,
-        avatar: full.avatar
+        avatar: full.avatar,
+        grade: full.grade,
+        directions: full.directions
       })
     }
   }
@@ -198,7 +211,9 @@ export function upsertUser(obj) {
       firstName: full.firstName,
       lastName: full.lastName,
       birthdate: full.birthdate,
-      avatar: full.avatar
+      avatar: full.avatar,
+      grade: full.grade,
+      directions: full.directions
     })
   }
 }
